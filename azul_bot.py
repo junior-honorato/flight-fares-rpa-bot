@@ -32,7 +32,7 @@ def enviar_telegram(mensagem):
         logging.error(f"[TELEGRAM] Erro de conexão: {e}")
 
 def salvar_historico_excel(origem, destino, data_voo_formatada, menor_preco):
-    arquivo_excel = r"C:\Chrome_Azul"
+    arquivo_excel = r"C:\Caminho\Para\Sua\Pasta\historico_precos_azul.xlsx"
     
     # O SEGREDO: Pegamos o objeto de data e hora REAL (sem converter para texto)
     agora = datetime.now() 
