@@ -24,7 +24,7 @@ Este projeto vai além de um simples web scraper, funcionando como uma mini-este
 
 1. Sessão Única: O script abre uma instância persistente do Chromium, navegando por múltiplas datas de voo sem reiniciar o processo.
 
-2. 3Resiliência: Implementação de retentativas automáticas (try/except) para lidar com lentidões ou indisponibilidades temporárias do site.
+2. Resiliência: Implementação de retentativas automáticas (try/except) para lidar com lentidões ou indisponibilidades temporárias do site.
 
 3. ETL Básico: Extrai a string de preço, limpa os caracteres, converte para inteiro e compara com a constante META_PONTOS.
 
@@ -32,13 +32,17 @@ Este projeto vai além de um simples web scraper, funcionando como uma mini-este
 
 5. Encerramento: Após a rotina, o script comanda a suspensão (hibernação) da máquina hospedeira para economia de recursos.
 
-🚀 Melhorias Futuras (Backlog)
+## 🚀 Como Executar Localmente
 
-- [ ] Ampliar para suportar busca de múltiplos destinos (ex: GRU/LIS, VCP/CDG).
+1. Clone este repositório.
+2. Instale as dependências (ex: `pip install playwright openpyxl requests`).
+3. Instale os navegadores do Playwright executando `playwright install`.
+4. No ficheiro `azul_bot.py`, insira as suas credenciais em `TOKEN_TELEGRAM` e `CHAT_ID`.
+5. Ajuste os caminhos de diretório locais para o padrão da sua máquina.
+6. **Para execução manual:** Corra o script Python diretamente.
+7. **Para execução autónoma (Agendada):** Importe ou aponte o Agendador de Tarefas do Windows para o ficheiro `executar_robo.bat` fornecido, permitindo que o robô corra de madrugada de forma invisível.
 
-- [ ] Dockerizar a aplicação para rodar em uma instância cloud (AWS EC2 / GCP).
 
-- [ ] Integrar com banco de dados relacional (PostgreSQL) para volume histórico mais robusto.
 
 👤 Autor Arlindo Júnior Honorato
 
