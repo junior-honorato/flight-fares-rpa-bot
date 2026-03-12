@@ -4,7 +4,7 @@ import sys
 import os
 
 # --- SUAS CREDENCIAIS ---
-TOKEN_TELEGRAM = "8671434874:AAHqV_9yxMPYAUuEeNLDXaJuyJ6fZn2Uhr8"
+TOKEN_TELEGRAM = "SEU_TOKEN_AQUI"
 
 # Inicializa o bot em modo de escuta
 bot = telebot.TeleBot(TOKEN_TELEGRAM)
@@ -49,4 +49,5 @@ def comando_buscar(mensagem):
         bot.reply_to(mensagem, erro_msg)
 
 # Mantém o script rodando em loop infinito à prova de quedas de rede
+
 bot.infinity_polling(timeout=10, long_polling_timeout=5)
