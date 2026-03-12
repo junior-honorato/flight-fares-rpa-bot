@@ -254,8 +254,3 @@ if __name__ == "__main__":
     # Finalização
     # ------------------------------------------
     logging.info("TODAS AS DATAS PROCESSADAS.")
-    logging.info("Aguardando 60 segundos para sincronização da planilha na nuvem...")
-    time.sleep(60) 
-    
-    logging.info("Suspendendo o PC agora.")
-    os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
