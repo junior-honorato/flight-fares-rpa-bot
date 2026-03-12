@@ -1,0 +1,28 @@
+2026-03-11 18:47:16,403 - INFO - 
+==========================================
+2026-03-11 18:47:16,408 - INFO -  INICIANDO FLUXO PARA A DATA: 04092026
+2026-03-11 18:47:16,411 - INFO - ==========================================
+2026-03-11 18:47:16,412 - INFO - Tentativa 1 de 3...
+2026-03-11 18:47:42,080 - INFO - Aguardando o carregamento dos voos...
+2026-03-11 18:47:55,363 - INFO -  -> O MENOR PREÇO DO DIA 04/09/2026 É: 180.000 PONTOS! <- 
+2026-03-11 18:47:56,302 - INFO - [PLANILHA] Histórico salvo na linha 17: 04/09/2026 - 180000 pontos.
+2026-03-11 18:47:56,302 - INFO - 
+==========================================
+2026-03-11 18:47:56,303 - INFO -  INICIANDO FLUXO PARA A DATA: 05092026
+2026-03-11 18:47:56,303 - INFO - ==========================================
+2026-03-11 18:47:56,304 - INFO - Tentativa 1 de 3...
+2026-03-11 18:48:33,561 - INFO - Aguardando o carregamento dos voos...
+2026-03-11 18:48:46,777 - INFO -  -> O MENOR PREÇO DO DIA 05/09/2026 É: 186.000 PONTOS! <- 
+2026-03-11 18:48:47,693 - INFO - [PLANILHA] Histórico salvo na linha 18: 05/09/2026 - 186000 pontos.
+2026-03-11 18:48:47,694 - INFO - 
+==========================================
+2026-03-11 18:48:47,695 - INFO -  INICIANDO FLUXO PARA A DATA: 06092026
+2026-03-11 18:48:47,695 - INFO - ==========================================
+2026-03-11 18:48:47,696 - INFO - Tentativa 1 de 3...
+2026-03-11 18:49:19,703 - INFO - Aguardando o carregamento dos voos...
+2026-03-11 18:49:34,971 - INFO -  -> O MENOR PREÇO DO DIA 06/09/2026 É: 174.600 PONTOS! <- 
+2026-03-11 18:49:35,961 - INFO - [PLANILHA] Histórico salvo na linha 19: 06/09/2026 - 174600 pontos.
+2026-03-11 18:49:35,962 - INFO - 
+==========================================
+2026-03-11 18:49:35,963 - INFO - Fechando o navegador...
+2026-03-11 18:49:36,811 - INFO - TODAS AS DATAS PROCESSADAS.
