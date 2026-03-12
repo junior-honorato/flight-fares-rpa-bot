@@ -73,7 +73,7 @@ def enviar_telegram(mensagem):
     try:
         url = f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/sendMessage"
         params = {
-            "chat_id": CHAT_ID_ARLINDO,
+            "chat_id": CHAT_ID_USUARIO,
             "text": mensagem,
         }
         response = requests.get(url, params=params)
@@ -88,4 +88,5 @@ def enviar_telegram(mensagem):
 print("\n📱 A enviar alerta para o Telegram de Arlindo...")
 
 # Aqui chamamos a sua função passando o texto que a IA acabou de escrever
+
 enviar_telegram(relatorio_final)
