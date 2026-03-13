@@ -1,4 +1,4 @@
-# ✈️ Agente Autônomo de Emissões (RPA + LLM)
+## ✈️ Agente Autônomo de Emissões (RPA + LLM)
 
 Este projeto evoluiu de um simples bot de extração de dados (RPA) para uma **Arquitetura Event-Driven de Agente Autônomo**, combinando automação web clássica com a capacidade analítica da Inteligência Artificial (Google Gemini) e comandos via ChatOps (Telegram).
 
@@ -16,7 +16,7 @@ graph TD
     E -->|Analisa Saldo x Custo| E
     E -->|Envia Relatório Executivo| A
 ```
-🛠️ Tecnologias Utilizadas
+## 🛠️ Tecnologias Utilizadas
 
 - RPA (Automação Web): Python + Playwright
 
@@ -26,7 +26,7 @@ graph TD
 
 - Orquestração e Notificação: pyTelegramBotAPI (Long Polling)
 
-⚙️ Como Funciona
+## ⚙️ Como Funciona
 
 - O Listener (Recepção 24/7): O bot_listener.py fica hospedado ouvindo comandos no Telegram.
 
@@ -36,7 +36,7 @@ graph TD
 
 - Relatório NLG (Natural Language Generation): A IA redige um alerta executivo recomendando a "Compra" ou "Espera" e detalhando o déficit exato, enviando diretamente para o celular do usuário via API do Telegram.
 
-🚀 Como Executar
+## 🚀 Como Executar
 
 - Clone o repositório.
 
