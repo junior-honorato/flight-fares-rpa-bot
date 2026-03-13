@@ -64,6 +64,8 @@ def salvar_historico_excel(origem, destino, data_voo_formatada, menor_preco):
         ws.cell(row=primeira_linha_vazia, column=3, value=destino)
         ws.cell(row=primeira_linha_vazia, column=4, value=data_voo_formatada)
         ws.cell(row=primeira_linha_vazia, column=5, value=menor_preco)
+        celula_preco = ws.cell(row=primeira_linha_vazia, column=5, value=menor_preco)
+        celula_preco.number_format = '#,##0'
         
         wb.save(arquivo_excel)
         logging.info(f"[PLANILHA] Histórico salvo na linha {primeira_linha_vazia}: {data_voo_formatada} - {menor_preco} pontos.")
