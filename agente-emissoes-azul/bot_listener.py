@@ -1,5 +1,7 @@
 import telebot
+from telebot.util import ExceptionHandler # <-- ADICIONADO: Necessário para a blindagem
 import subprocess
+import time
 import sys
 import os
 from dotenv import load_dotenv
@@ -8,14 +10,24 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Puxa o token com segurança
-TOKEN_TELEGRAM = os.getenv("TOKEN_TELEGRAM")
+TOKEN_TELEGRAM = os.getenv("TELEGRAM_TOKEN") # <-- AJUSTADO: Para o nome exato que está no seu .env
 
 # Se o token não for encontrado, ele avisa para evitar que o robô quebre em silêncio
 if not TOKEN_TELEGRAM:
     raise ValueError("❌ Erro: TELEGRAM_TOKEN não encontrado. Verifique o seu arquivo .env!")
 
-# Inicializa o bot em modo de escuta
-bot = telebot.TeleBot(TOKEN_TELEGRAM)
+# ==========================================
+# TRATAMENTO DE ERROS DE REDE (A BLINDAGEM)
+# ==========================================
+# <-- ADICIONADO: Esta classe impede que o bot morra por quedas de internet
+class BotExceptionHandler(ExceptionHandler):
+    def handle(self, exception):
+        print(f"⚠️ [ALERTA DE REDE INTERNO] Ocorreu uma oscilação na conexão com o Telegram: {exception}")
+        print("🔄 O bot irá ignorar o erro e tentar reconectar automaticamente...")
+        return True 
+
+# Inicializa o bot em modo de escuta passando o escudo de erros
+bot = telebot.TeleBot(TOKEN_TELEGRAM, exception_handler=BotExceptionHandler())
 
 print("🎧 Orquestrador ligado! O bot está aguardando comandos no Telegram...")
 
@@ -206,7 +218,14 @@ def processar_acao_data(mensagem):
         bot.reply_to(mensagem, feedback_msg)
 
 # ==========================================
-# LOOP INFINITO (SEMPRE A ÚLTIMA LINHA)
+# LOOP INFINITO (BLINDADO CONTRA QUEDAS DE REDE)
 # ==========================================
-# Mantém o script rodando em loop infinito à prova de quedas de rede
-bot.infinity_polling(timeout=10, long_polling_timeout=5)
+while True:
+    try:
+        print("📡 Iniciando o monitoramento contínuo. Conectado aos servidores do Telegram...")
+        # <-- AJUSTADO: Timeout de 60s e bot.polling no lugar do infinity
+        bot.polling(non_stop=True, timeout=60, long_polling_timeout=60)
+    except Exception as e:
+        print(f"⚠️ [QUEDA GRAVE] O loop principal falhou: {e}")
+        print("🔄 Reiniciando o motor de escuta em 5 segundos...")
+        time.sleep(5)
