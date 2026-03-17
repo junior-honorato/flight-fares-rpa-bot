@@ -2,39 +2,58 @@ import os
 import time
 import logging
 import requests
+from dotenv import load_dotenv
 from datetime import datetime
 from playwright.sync_api import sync_playwright
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Alignment
 
 # ==========================================
-# CONFIGURAÇÃO DO TELEGRAM E META
+# CONFIGURAÇÃO DE SEGURANÇA E AMBIENTE
 # ==========================================
-TOKEN_TELEGRAM = "SEU_TOKEN_AQUI" # <-- NÃO ESQUEÇA DE COLOCAR O SEU TOKEN REAL AQUI!
-CHAT_ID_ARLINDO = "SEU_CHAT_ID_AQUI"
+# 1. Força o caminho ABSOLUTO (resolve o erro do subprocess)
+pasta_raiz = os.path.dirname(os.path.abspath(__file__))
+caminho_env = os.path.join(pasta_raiz, '.env')
+
+# 2. Carrega os segredos forçando a leitura do arquivo correto
+load_dotenv(caminho_env, override=True)
+
+# Resgata as chaves
+TOKEN_TELEGRAM = os.getenv("TOKEN_TELEGRAM")
+CHAT_ID_ARLINDO = os.getenv("CHAT_ID_ARLINDO")
+
+# Lê a meta de pontos
 META_PONTOS = 120000
 
+# Validação de segurança
+if not TOKEN_TELEGRAM or not CHAT_ID_ARLINDO:
+    logging.error(f"❌ Erro Crítico: O arquivo .env não foi lido corretamente no caminho: {caminho_env}")
+    raise ValueError("Credenciais do Telegram em falta. Verifique o seu .env.")
+
+# ==========================================
+# FUNÇÃO DE ALERTA DO ROBÔ
+# ==========================================
 def enviar_telegram(mensagem):
     try:
         url = f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/sendMessage"
-        params = {
+        payload = {
             "chat_id": CHAT_ID_ARLINDO,
             "text": mensagem,
             "parse_mode": "Markdown"
         }
-        response = requests.get(url, params=params)
+        
+        response = requests.post(url, json=payload)
 
         if response.status_code == 200:
             logging.info("[TELEGRAM] Alerta enviado com sucesso!")
         else:
             logging.error(f"[TELEGRAM] Erro na API: {response.text}")
+            
     except Exception as e:
         logging.error(f"[TELEGRAM] Erro de conexão: {e}")
 
 def salvar_historico_excel(origem, destino, data_voo_formatada, menor_preco):
-    arquivo_excel = r"C:\Caminho\Para\Sua\Pasta\historico_precos_azul.xlsx"
-    
-    # O SEGREDO: Pegamos o objeto de data e hora REAL (sem converter para texto)
+    arquivo_excel = r"C:\Users\junio\Desktop\Automacao_Azul\historico_precos_azul.xlsx"
     agora = datetime.now() 
     
     try:
@@ -47,7 +66,6 @@ def salvar_historico_excel(origem, destino, data_voo_formatada, menor_preco):
             wb = load_workbook(arquivo_excel)
             ws = wb["Historico_Precos"]
         
-        # Varre para achar a primeira linha vazia exata
         primeira_linha_vazia = 2
         for row in range(2, ws.max_row + 100): 
             valor_celula = ws.cell(row=row, column=1).value
@@ -55,17 +73,15 @@ def salvar_historico_excel(origem, destino, data_voo_formatada, menor_preco):
                 primeira_linha_vazia = row
                 break
         
-        # Insere a DATA COMO OBJETO e aplica a máscara brasileira
         celula_data = ws.cell(row=primeira_linha_vazia, column=1, value=agora)
         celula_data.number_format = 'dd/mm/yyyy hh:mm:ss'
         
-        # Insere o resto dos dados
         ws.cell(row=primeira_linha_vazia, column=2, value=origem)
         ws.cell(row=primeira_linha_vazia, column=3, value=destino)
         ws.cell(row=primeira_linha_vazia, column=4, value=data_voo_formatada)
-        ws.cell(row=primeira_linha_vazia, column=5, value=menor_preco)
+        
         celula_preco = ws.cell(row=primeira_linha_vazia, column=5, value=menor_preco)
-        celula_preco.number_format = '#,##0'
+        celula_preco.number_format = '#,##0' 
         
         wb.save(arquivo_excel)
         logging.info(f"[PLANILHA] Histórico salvo na linha {primeira_linha_vazia}: {data_voo_formatada} - {menor_preco} pontos.")
@@ -88,9 +104,7 @@ logging.basicConfig(
 )
 
 def buscar_passagem_azul(page, origem, destino, data_ida):
-    """ Utiliza a aba única para buscar a passagem """
     try:
-        # Voltar para a Home reseta o site para a próxima pesquisa
         page.goto("https://www.voeazul.com.br")
 
         try:
@@ -103,7 +117,6 @@ def buscar_passagem_azul(page, origem, destino, data_ida):
         page.keyboard.press("Escape")
         time.sleep(1)
 
-        # Origem
         campo_origem = page.locator("input[aria-label='Origem'][role='combobox']").first
         campo_origem.evaluate("node => node.focus()")
         campo_origem.evaluate("node => node.click()")
@@ -116,7 +129,6 @@ def buscar_passagem_azul(page, origem, destino, data_ida):
         time.sleep(0.5)
         page.keyboard.press("Enter")
 
-        # Destino
         campo_destino = page.locator("input[aria-label='Destino'][role='combobox']").first
         campo_destino.evaluate("node => node.focus()")
         campo_destino.evaluate("node => node.click()")
@@ -131,7 +143,6 @@ def buscar_passagem_azul(page, origem, destino, data_ida):
         time.sleep(0.5)
         page.keyboard.press("Enter")
 
-        # Data
         campo_data = page.locator("input[aria-label='Data de ida']").first
         campo_data.evaluate("node => node.focus()")
         campo_data.evaluate("node => node.click()")
@@ -144,7 +155,6 @@ def buscar_passagem_azul(page, origem, destino, data_ida):
         page.keyboard.press("Escape")
         time.sleep(1)
 
-        # Usar Pontos
         try:
             page.locator("input[data-cy='checkbox-points']").evaluate("node => node.click()")
         except:
@@ -152,13 +162,11 @@ def buscar_passagem_azul(page, origem, destino, data_ida):
             except: pass
         time.sleep(1)
 
-        # Buscar
         try:
             page.locator("button:has-text('Buscar passagens')").evaluate("node => node.click()")
         except:
             page.keyboard.press("Enter") 
 
-        # Extração
         logging.info("Aguardando o carregamento dos voos...")
         seletor_preco = "[data-test-id*='fare-price-with-points']"
         
@@ -175,7 +183,6 @@ def buscar_passagem_azul(page, origem, destino, data_ida):
             except ValueError:
                 continue 
         
-        # Processamento
         if len(lista_de_precos) > 0:
             menor_preco = min(lista_de_precos)
             data_formatada = f"{data_ida[:2]}/{data_ida[2:4]}/{data_ida[4:]}"
@@ -207,15 +214,58 @@ def buscar_passagem_azul(page, origem, destino, data_ida):
 if __name__ == "__main__":
     SIGLA_ORIGEM = "VCP"
     SIGLA_DESTINO = "LIS"
-    DATAS_VIAGEM = ["04092026", "05092026", "06092026"] 
     MAX_TENTATIVAS = 3 
+
+    # ==========================================
+    # LEITURA E VALIDAÇÃO DO ARQUIVO DE DATAS
+    # ==========================================
+    DATAS_VIAGEM = []
     
+    # 3. Força o caminho absoluto também para as datas
+    caminho_datas = os.path.join(pasta_raiz, "datas_viagem.txt")
+
+    texto_manual = (
+        "=== MANUAL DE DATAS PARA O ROBÔ ===\n"
+        "# O robô só fará a leitura de linhas que contenham o caractere \":\"\n"
+        "# Digite a data com 8 dígitos, sem barras.\n\n"
+        "Data alvo: 04092026\n"
+        "Data alvo: 05092026\n"
+        "Data alvo: 06092026\n"
+    )
+
+    if not os.path.exists(caminho_datas):
+        logging.info("⚙️ Arquivo 'datas_viagem.txt' não encontrado. Criando arquivo com o manual padrão...")
+        with open(caminho_datas, "w", encoding="utf-8") as f:
+            f.write(texto_manual)
+
+    with open(caminho_datas, "r", encoding="utf-8") as f:
+        linhas = f.readlines()
+        
+        for linha in linhas:
+            if not linha.strip() or linha.startswith("#") or linha.startswith("="):
+                continue
+                
+            if ":" in linha:
+                data_extraida = linha.split(":")[1].strip()
+                if len(data_extraida) == 8 and data_extraida.isdigit():
+                    DATAS_VIAGEM.append(data_extraida)
+                else:
+                    logging.warning(f"⚠️ Formato inválido ignorado na leitura: '{data_extraida}'")
+
+    if len(DATAS_VIAGEM) == 0:
+        logging.warning("⚠️ Nenhuma data válida encontrada no arquivo. Restaurando o manual de segurança...")
+        DATAS_VIAGEM = ["04092026", "05092026", "06092026"]
+        with open(caminho_datas, "w", encoding="utf-8") as f:
+            f.write(texto_manual)
+
+    logging.info(f"✅ Robô inicializado. Datas validadas: {DATAS_VIAGEM}")
+
     # ==========================================
     # SESSÃO ÚNICA: Abre o navegador apenas uma vez
     # ==========================================
     with sync_playwright() as p:
         browser = p.chromium.launch_persistent_context(
-            user_data_dir=r"C:\Caminho\Para\Chrome_Profile",
+            user_data_dir=r"C:\Chrome_Azul", 
             channel="chrome",                
             headless=False, 
             no_viewport=True, 
@@ -235,10 +285,9 @@ if __name__ == "__main__":
                 try:
                     buscar_passagem_azul(page, SIGLA_ORIGEM, SIGLA_DESTINO, data)
                     sucesso_na_data = True
-                    # Sai do loop de tentativas e avança para o próximo dia na MESMA tela
                     break 
                 except Exception as e:
-                    logging.warning(f"Falha na tentativa {tentativa} para a data {data}.")
+                    logging.warning(f"Falha na tentativa {tentativa} para a data {data}. Erro: {e}")
                     if tentativa < MAX_TENTATIVAS:
                         logging.info("Aguardando 5 segundos antes de tentar novamente...")
                         time.sleep(5)
@@ -252,7 +301,4 @@ if __name__ == "__main__":
         logging.info("Fechando o navegador...")
         browser.close()
 
-    # ------------------------------------------
-    # Finalização
-    # ------------------------------------------
     logging.info("TODAS AS DATAS PROCESSADAS.")
