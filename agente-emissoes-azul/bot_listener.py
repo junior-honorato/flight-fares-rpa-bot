@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Puxa o token com segurança
-TOKEN_TELEGRAM = os.getenv("TELEGRAM_TOKEN")
+TOKEN_TELEGRAM = os.getenv("TOKEN_TELEGRAM")
 
 # Se o token não for encontrado, ele avisa para evitar que o robô quebre em silêncio
 if not TOKEN_TELEGRAM:
