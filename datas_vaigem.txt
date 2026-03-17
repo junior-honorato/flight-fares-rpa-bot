@@ -1,0 +1,7 @@
+=== MANUAL DE DATAS PARA O ROBÔ ===
+# O robô só fará a leitura de linhas que contenham o caractere ":"
+# Digite a data com 8 dígitos, sem barras.
+
+Data alvo: 01092026
+Data alvo: 02092026
+Data alvo: 03092026
