@@ -16,7 +16,7 @@ caminho_env = os.path.join(pasta_raiz, '.env')
 load_dotenv(caminho_env, override=True)
 
 # Resgata as chaves de forma segura (Atenção ao nome exato no .env)
-TOKEN_TELEGRAM = os.getenv("TELEGRAM_TOKEN")
+TOKEN_TELEGRAM = os.getenv("TOKEN_TELEGRAM")
 CHAT_ID_ARLINDO = os.getenv("CHAT_ID_ARLINDO")
 CHAVE_API_GOOGLE = os.getenv("CHAVE_API_GOOGLE")
 
