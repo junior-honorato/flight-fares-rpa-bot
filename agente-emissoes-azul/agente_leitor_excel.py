@@ -2,37 +2,37 @@ import os
 import requests
 import pandas as pd
 from dotenv import load_dotenv
-import google.generativeai as genai
-import telebot
+from google import genai
 
 # ==========================================
 # CONFIGURAÇÃO DE SEGURANÇA E AMBIENTE
 # ==========================================
-# Carrega os segredos do arquivo .env para a memória
-load_dotenv()
+# 1. Descobre a pasta atual e sobe um nível para achar o .env na raiz do projeto
+pasta_atual = os.path.dirname(os.path.abspath(__file__))
+pasta_raiz = os.path.dirname(pasta_atual)
+caminho_env = os.path.join(pasta_raiz, '.env')
 
-# Resgata as chaves de forma segura
-TOKEN_TELEGRAM = os.getenv("TOKEN_TELEGRAM")
+# Carrega os segredos forçando a leitura do arquivo correto
+load_dotenv(caminho_env, override=True)
+
+# Resgata as chaves de forma segura (Atenção ao nome exato no .env)
+TOKEN_TELEGRAM = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID_ARLINDO = os.getenv("CHAT_ID_ARLINDO")
 CHAVE_API_GOOGLE = os.getenv("CHAVE_API_GOOGLE")
 
-# Validação de segurança (evita que o script rode cego)
+# Validação de segurança
 if not all([TOKEN_TELEGRAM, CHAT_ID_ARLINDO, CHAVE_API_GOOGLE]):
-    raise ValueError("❌ Erro Crítico: Uma ou mais credenciais (Telegram, Chat ID ou Google API) estão faltando no arquivo .env!")
+    raise ValueError(f"❌ Erro Crítico: Credenciais ausentes. Verifique o arquivo .env no caminho: {caminho_env}")
 
 # ==========================================
-# INICIALIZAÇÃO DOS SERVIÇOS
+# INICIALIZAÇÃO DA IA
 # ==========================================
-# Configura o cérebro da IA (Gemini)
-genai.configure(api_key=CHAVE_API_GOOGLE)
-
-# Configura o mensageiro (Telegram)
-bot = telebot.TeleBot(TOKEN_TELEGRAM)
-
-# ==========================================
-# 2. LEITURA DOS DADOS (O RPA)
-# ==========================================
+# Inicialização exclusiva do pacote google-genai
 cliente = genai.Client(api_key=CHAVE_API_GOOGLE)
+
+# ==========================================
+# LEITURA DOS DADOS (O RPA)
+# ==========================================
 caminho_excel = r"C:\Users\junio\Desktop\Automacao_Azul\historico_precos_azul.xlsx"
 
 print("🔍 Lendo a aba 'Historico_Precos' do Excel...")
@@ -53,7 +53,7 @@ if not dados_para_ia.strip():
     exit()
 
 # ==========================================
-# 3. O CÉREBRO DA IA (O AGENTE)
+# O CÉREBRO DA IA (O AGENTE)
 # ==========================================
 prompt_agente = f"""
 Atue como um sistema de notificação executiva. O seu objetivo é gerar um "Flash Report" para ser lido em 5 segundos no ecrã de um celular.
@@ -78,25 +78,30 @@ MENSAGEM A GERAR:
 """
 
 print("✈️ O Agente está a analisar e a redigir a mensagem para o Telegram...\n")
-resposta = cliente.models.generate_content(
-    model='gemini-2.5-flash',
-    contents=prompt_agente
-)
-
-relatorio_final = resposta.text
-print("Mensagem gerada pela IA:\n", relatorio_final)
+try:
+    resposta = cliente.models.generate_content(
+        model='gemini-2.5-flash',
+        contents=prompt_agente
+    )
+    relatorio_final = resposta.text
+    print("Mensagem gerada pela IA:\n", relatorio_final)
+except Exception as e:
+    print(f"❌ Erro ao gerar resposta com a IA: {e}")
+    exit()
 
 # ==========================================
-# 4. DISPARO AUTÔNOMO (A SUA FUNÇÃO ORIGINAL)
+# DISPARO AUTÔNOMO
 # ==========================================
 def enviar_telegram(mensagem):
     try:
         url = f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/sendMessage"
-        params = {
+        # O POST com JSON é a melhor prática para mensagens grandes e estruturadas
+        payload = {
             "chat_id": CHAT_ID_ARLINDO,
             "text": mensagem,
+            "parse_mode": "Markdown" # Garante que as formatações e emojis funcionem
         }
-        response = requests.get(url, params=params)
+        response = requests.post(url, json=payload)
 
         if response.status_code == 200:
             print("✅ [TELEGRAM] Alerta inteligente enviado com sucesso no seu celular!")
@@ -106,6 +111,4 @@ def enviar_telegram(mensagem):
         print(f"❌ [TELEGRAM] Erro de conexão: {e}")
 
 print("\n📱 A enviar alerta para o Telegram de Arlindo...")
-
-# Aqui chamamos a sua função passando o texto que a IA acabou de escrever
 enviar_telegram(relatorio_final)
