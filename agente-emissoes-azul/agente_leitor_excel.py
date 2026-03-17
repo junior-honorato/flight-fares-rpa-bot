@@ -1,14 +1,33 @@
 import os
 import requests
 import pandas as pd
-from google import genai
+from dotenv import load_dotenv
+import google.generativeai as genai
+import telebot
 
 # ==========================================
-# 1. SUAS CREDENCIAIS (PREENCHA AQUI)
+# CONFIGURAÇÃO DE SEGURANÇA E AMBIENTE
 # ==========================================
-TOKEN_TELEGRAM = "SEU_TOKEN_AQUI" 
-CHAT_ID_USUARIO = "SEU_ID_AQUI"
-CHAVE_API_GOOGLE = "SUA_CHAVE_AQUI" 
+# Carrega os segredos do arquivo .env para a memória
+load_dotenv()
+
+# Resgata as chaves de forma segura
+TOKEN_TELEGRAM = os.getenv("TOKEN_TELEGRAM")
+CHAT_ID_ARLINDO = os.getenv("CHAT_ID_ARLINDO")
+CHAVE_API_GOOGLE = os.getenv("CHAVE_API_GOOGLE")
+
+# Validação de segurança (evita que o script rode cego)
+if not all([TOKEN_TELEGRAM, CHAT_ID_ARLINDO, CHAVE_API_GOOGLE]):
+    raise ValueError("❌ Erro Crítico: Uma ou mais credenciais (Telegram, Chat ID ou Google API) estão faltando no arquivo .env!")
+
+# ==========================================
+# INICIALIZAÇÃO DOS SERVIÇOS
+# ==========================================
+# Configura o cérebro da IA (Gemini)
+genai.configure(api_key=CHAVE_API_GOOGLE)
+
+# Configura o mensageiro (Telegram)
+bot = telebot.TeleBot(TOKEN_TELEGRAM)
 
 # ==========================================
 # 2. LEITURA DOS DADOS (O RPA)
@@ -37,24 +56,25 @@ if not dados_para_ia.strip():
 # 3. O CÉREBRO DA IA (O AGENTE)
 # ==========================================
 prompt_agente = f"""
-Atue como um analista executivo de emissões de passagens aéreas.
+Atue como um sistema de notificação executiva. O seu objetivo é gerar um "Flash Report" para ser lido em 5 segundos no ecrã de um celular.
 
-Cenário restrito:
-- Viagem para a Europa (Portugal/Itália) em setembro de 2026.
-- Total de passageiros: 2 pessoas.
-- Saldo atualizado: 75.000 pontos Azul no total (sendo 55.000 pontos da minha conta Safira + 20.000 pontos da conta da minha esposa).
+CONTEXTO FINANCEIRO DO USUÁRIO:
+- Objetivo: Viagem de 14 dias para a Europa (Portugal/Itália) em setembro de 2026 para 2 passageiros (titular e esposa).
+- Saldo atualizado na Azul: 75.000 pontos (55.000 da conta Safira + 20.000 da conta da esposa).
+- Ativos extras para cobrir déficit: Cartão de crédito C6 Carbon (que permite transferência para a Azul) e assinatura mensal do Clube Azul 10k (que injeta 10.000 pontos/mês).
 
-Aqui estão os resultados reais que o sistema extraiu hoje:
+DADOS EXTRAÍDOS HOJE:
 {dados_para_ia}
 
-A tua tarefa:
-Formule um relatório detalhado e estruturado para o Telegram, contendo os seguintes tópicos:
-1. 🔍 RESUMO DA BUSCA: Liste o menor preço encontrado hoje, destacando o destino e a data do voo.
-2. 🧮 CÁLCULO DE EMISSÃO: Mostre a matemática claramente (Custo da passagem x 2 passageiros = Custo Total).
-3. 📊 BALANÇO FINANCEIRO: Compare o Custo Total com o nosso saldo combinado de 75.000 pontos (mencione a composição do saldo) e informe o déficit exato de pontos que faltam.
-4. 🎯 VEREDITO: Uma recomendação clara e objetiva (Comprar ou Esperar).
+INSTRUÇÕES RIGOROSAS DE FORMATAÇÃO:
+1. NÃO inclua saudações, introduções ("Fala galera", "Aqui está o resumo") ou despedidas. 
+2. Retorne APENAS os 4 tópicos abaixo, sendo o mais direto possível.
 
-Use emojis para organizar os tópicos, mas evite formatação Markdown excessiva (como negritos em todas as palavras) para manter o texto limpo no celular.
+MENSAGEM A GERAR:
+🎯 Melhor Preço: [Menor preço encontrado e data]
+🧮 Custo Total (2 pax): [Total em pontos]
+💰 Balanço: Faltam [X] pontos para os 75k atuais.
+⚖️ Veredito: [1 frase direta. Se faltarem pontos, calcule quantos meses de Clube Azul 10k seriam necessários para cobrir, ou sugira avaliar o saldo do C6 Carbon. Nunca mande transferir sem avisar para checar o saldo].
 """
 
 print("✈️ O Agente está a analisar e a redigir a mensagem para o Telegram...\n")
@@ -73,7 +93,7 @@ def enviar_telegram(mensagem):
     try:
         url = f"https://api.telegram.org/bot{TOKEN_TELEGRAM}/sendMessage"
         params = {
-            "chat_id": CHAT_ID_USUARIO,
+            "chat_id": CHAT_ID_ARLINDO,
             "text": mensagem,
         }
         response = requests.get(url, params=params)
@@ -88,5 +108,4 @@ def enviar_telegram(mensagem):
 print("\n📱 A enviar alerta para o Telegram de Arlindo...")
 
 # Aqui chamamos a sua função passando o texto que a IA acabou de escrever
-
 enviar_telegram(relatorio_final)
