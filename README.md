@@ -7,16 +7,33 @@ Este projeto evoluiu de um simples bot de extração de dados (RPA) para uma **A
 O sistema separa claramente o "Músculo" (extração de dados brutos), o "Cérebro" (tomada de decisão) e a "Interface" (gestão do usuário via Telegram).
 
 ```mermaid
-graph TD
-    A[Usuário no Telegram] <-->|/buscar ou /datas| B(Orquestrador: bot_listener.py)
-    B -->|Aciona| C{RPA: azul_bot.py}
-    B -.->|Lê/Grava Datas| F[datas_viagem.txt]
-    F -.->|Alimenta| C
-    C -->|Web Scraping| D[(Planilha Excel)]
-    B -->|Aciona| E{Agente IA: agente_leitor.py}
-    D -->|Lê Dados Reais| E
-    E -->|Gera Flash Report| E
-    E -->|Envia Relatório Executivo| A
+flowchart LR
+    A[📱 Usuário no<br>Telegram]
+
+    subgraph Backend [Back-end da Aplicação Local]
+        direction TB
+        
+        subgraph L1 [Linha 1: Automação e Extração]
+            direction LR
+            B(🎧 Orquestrador:<br>bot_listener.py) -.->|Lê/Grava| F[📝 datas_viagem.txt]
+            B -->|Aciona| C{🤖 RPA Extrator:<br>azul_bot.py}
+            F -.->|Alimenta| C
+        end
+        
+        subgraph L2 [Linha 2: Dados e IA]
+            direction LR
+            D[(📊 Planilha<br>Excel)] -->|Lê Histórico| E{🧠 Agente IA:<br>agente_leitor.py}
+        end
+        
+        %% A MÁGICA ACONTECE AQUI: Elo invisível para forçar a L2 abaixo da L1
+        L1 ~~~ L2
+        
+        C -->|Grava Dados| D
+        B -->|Aciona| E
+    end
+
+    A <-->|/buscar ou /datas| B
+    E -.->|Envia Flash Report| A
 ```
 
 ## 🌟 Novas Funcionalidades (v2.0)
