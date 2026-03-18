@@ -69,6 +69,7 @@ DADOS EXTRAÍDOS HOJE:
 INSTRUÇÕES RIGOROSAS DE FORMATAÇÃO:
 1. NÃO inclua saudações, introduções ("Fala galera", "Aqui está o resumo") ou despedidas. 
 2. Retorne APENAS os 4 tópicos abaixo, sendo o mais direto possível.
+3. Formate a resposta usando HTML básico (use <b>texto</b> para negrito). NUNCA use caracteres de Markdown como asteriscos (**) ou underlines (_).
 
 MENSAGEM A GERAR:
 🎯 Melhor Preço: [Menor preço encontrado e data]
