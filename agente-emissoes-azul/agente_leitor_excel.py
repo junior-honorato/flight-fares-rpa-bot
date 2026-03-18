@@ -99,7 +99,7 @@ def enviar_telegram(mensagem):
         payload = {
             "chat_id": CHAT_ID_ARLINDO,
             "text": mensagem,
-            "parse_mode": "Markdown" # Garante que as formatações e emojis funcionem
+            "parse_mode": "HTML" # Garante que as formatações e emojis funcionem
         }
         response = requests.post(url, json=payload)
 
