@@ -67,9 +67,10 @@ flowchart LR
 3. Instale os navegadores do Playwright: `playwright install chromium`
 4. Crie um arquivo chamado `.env` na raiz do projeto e preencha suas chaves:
    ```env
-   TELEGRAM_TOKEN=seu_token_aqui
+   TOKEN_TELEGRAM=seu_token_aqui
    CHAT_ID_ARLINDO=seu_chat_id_aqui_ou_id_do_grupo
    CHAVE_API_GOOGLE=sua_chave_gemini_aqui
+   ```
 
 ---
 👤 **Autor:** Arlindo Júnior Honorato  
