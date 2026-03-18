@@ -246,7 +246,6 @@ def menu_ajuda(mensagem):
     
     bot.reply_to(mensagem, texto_ajuda, parse_mode="Markdown")
 
-
 # ==========================================
 # LOOP INFINITO (BLINDADO CONTRA QUEDAS DE REDE)
 # ==========================================
