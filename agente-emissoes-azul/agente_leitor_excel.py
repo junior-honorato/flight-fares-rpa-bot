@@ -20,6 +20,9 @@ TOKEN_TELEGRAM = os.getenv("TOKEN_TELEGRAM")
 CHAT_ID_ARLINDO = os.getenv("CHAT_ID_ARLINDO")
 CHAVE_API_GOOGLE = os.getenv("CHAVE_API_GOOGLE")
 
+SALDO_AZUL = os.getenv("SALDO_AZUL", "75000")
+QTD_PASSAGEIROS = os.getenv("QTD_PASSAGEIROS", "2")
+
 # Validação de segurança
 if not all([TOKEN_TELEGRAM, CHAT_ID_ARLINDO, CHAVE_API_GOOGLE]):
     raise ValueError(f"❌ Erro Crítico: Credenciais ausentes. Verifique o arquivo .env no caminho: {caminho_env}")
@@ -59,9 +62,10 @@ prompt_agente = f"""
 Atue como um sistema de notificação executiva. O seu objetivo é gerar um "Flash Report" para ser lido em 5 segundos no ecrã de um celular.
 
 CONTEXTO FINANCEIRO DO USUÁRIO:
-- Objetivo: Viagem de 14 dias para a Europa (Portugal/Itália) em setembro de 2026 para 2 passageiros (titular e esposa).
-- Saldo atualizado na Azul: 75.000 pontos (55.000 da conta Safira + 20.000 da conta da esposa).
-- Ativos extras para cobrir déficit: Cartão de crédito C6 Carbon (que permite transferência para a Azul) e assinatura mensal do Clube Azul 10k (que injeta 10.000 pontos/mês).
+- Objetivo: Viagem de 14 dias para a Europa (Portugal/Itália) em setembro de 2026.
+- Passageiros: {QTD_PASSAGEIROS}.
+- Saldo atualizado na Azul: {SALDO_AZUL} pontos.
+- Ativos extras para cobrir déficit: Cartão de crédito C6 Carbon (transferível para a Azul) e assinatura mensal do Clube Azul 10k.
 
 DADOS EXTRAÍDOS HOJE:
 {dados_para_ia}
@@ -73,8 +77,8 @@ INSTRUÇÕES RIGOROSAS DE FORMATAÇÃO:
 
 MENSAGEM A GERAR:
 🎯 Melhor Preço: [Menor preço encontrado e data]
-🧮 Custo Total (2 pax): [Total em pontos]
-💰 Balanço: Faltam [X] pontos para os 75k atuais.
+🧮 Custo Total ({QTD_PASSAGEIROS} pax): [Total em pontos]
+💰 Balanço: Faltam [X] pontos para os {SALDO_AZUL} atuais.
 ⚖️ Veredito: [1 frase direta. Se faltarem pontos, calcule quantos meses de Clube Azul 10k seriam necessários para cobrir, ou sugira avaliar o saldo do C6 Carbon. Nunca mande transferir sem avisar para checar o saldo].
 """
 
