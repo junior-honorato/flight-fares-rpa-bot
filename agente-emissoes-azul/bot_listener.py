@@ -76,29 +76,34 @@ def salvar_datas_arquivo(lista_datas):
 # COMANDOS DO TELEGRAM
 # ==========================================
 
+import threading # <-- ADICIONE NO TOPO JUNTO COM OS OUTROS IMPORTS
+
 # --- GATILHO: /buscar ---
 @bot.message_handler(commands=['buscar'])
 def comando_buscar(mensagem):
-    # 1. Dá um feedback imediato no seu telemóvel
-    bot.reply_to(mensagem, "✈️ Entendido, chefe, vamos que vamo! Acordando o robô...\n\nVou abrir o navegador, buscar os preços de hoje e logo em seguida passo para a IA analisar. Isso leva cerca de 6 minutos. ⏳")
+    bot.reply_to(mensagem, "✈️ Entendido, chefe, vamos que vamo! Acordando o robô...\n\nVou abrir o navegador em segundo plano, buscar os preços de hoje e logo em seguida passo para a IA analisar. Pode continuar a usar o bot enquanto eu trabalho. ⏳")
     
     print("\n[🤖 COMANDO RECEBIDO] Iniciando a esteira de automação...")
     
-    try:
-        # 2. Chama o seu script RPA na pasta de cima
-        print(f"-> Executando o RPA em: {caminho_rpa}")
-        subprocess.run([sys.executable, caminho_rpa], check=True)
-        
-        # 3. Chama o Agente de IA na pasta atual
-        print(f"-> Executando o Agente de IA em: {caminho_agente}")
-        subprocess.run([sys.executable, caminho_agente], check=True)
-        
-        print("✅ Esteira concluída com sucesso. Aguardando novos comandos.")
-        
-    except Exception as e:
-        erro_msg = f"❌ Ocorreu um erro durante a execução da esteira: {e}"
-        print(erro_msg)
-        bot.reply_to(mensagem, erro_msg)
+    def rodar_esteira():
+        try:
+            print(f"-> Executando o RPA em: {caminho_rpa}")
+            subprocess.run([sys.executable, caminho_rpa], check=True)
+            
+            print(f"-> Executando o Agente de IA em: {caminho_agente}")
+            subprocess.run([sys.executable, caminho_agente], check=True)
+            
+            print("✅ Esteira concluída com sucesso. Aguardando novos comandos.")
+        except Exception as e:
+            erro_msg = f"❌ Ocorreu um erro durante a execução da esteira: {e}"
+            print(erro_msg)
+            try:
+                bot.send_message(mensagem.chat.id, erro_msg)
+            except: pass
+
+    # Inicia o robô sem travar o Telegram
+    thread_rpa = threading.Thread(target=rodar_esteira)
+    thread_rpa.start()
 
 # --- GATILHO: /datas ---
 @bot.message_handler(commands=['datas'])
