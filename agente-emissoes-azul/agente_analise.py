@@ -27,7 +27,7 @@ cliente = genai.Client(api_key=CHAVE_API_GOOGLE)
 # ==========================================
 # 3. LEITURA DE DADOS (RAG - HISTÓRICO EXPANDIDO)
 # ==========================================
-caminho_excel = r"C:\Users\junio\Desktop\Automacao_Azul\historico_precos_azul.xlsx"
+caminho_excel = os.getenv("CAMINHO_PLANILHA")
 
 print("📊 Extraindo histórico completo do Excel para análise de tendências...")
 try:
@@ -69,7 +69,7 @@ BASE DE DADOS HISTÓRICA (ÚLTIMAS BUSCAS DO ROBÔ):
 
 Sua missão é ler este histórico de preços e gerar um relatório analítico tático para o Telegram.
 
-IINSTRUÇÕES RIGOROSAS:
+INSTRUÇÕES RIGOROSAS:
 1. Não use saudações ou despedidas. Vá direto ao ponto.
 2. Formate a resposta usando HTML básico (use <b>texto</b> para negrito). NUNCA use caracteres de Markdown como asteriscos (**) ou underlines (_).
 3. O relatório DEVE conter exatamente estas 3 seções:
