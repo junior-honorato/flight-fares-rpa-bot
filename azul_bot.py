@@ -22,8 +22,8 @@ load_dotenv(caminho_env, override=True)
 TOKEN_TELEGRAM = os.getenv("TOKEN_TELEGRAM")
 CHAT_ID_ARLINDO = os.getenv("CHAT_ID_ARLINDO")
 
-# Lê a meta de pontos
-META_PONTOS = os.getenv("META_PONTOS")
+# Lê a meta de pontos e converte para número
+META_PONTOS = int(os.getenv("META_PONTOS", "120000"))
 
 # Lê o caminho do perfil do Chrome
 CAMINHO_CHROME = os.getenv("CAMINHO_PERFIL_CHROME")
