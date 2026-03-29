@@ -73,7 +73,7 @@ flowchart LR
    CAMINHO_PLANILHA=sua_pasta_planilha
    CAMINHO_PERFIL_CHROME=seu_perfil_Chrome
    SALDO_AZUL=75000
-    QTD_PASSAGEIROS=2
+   QTD_PASSAGEIROS=2
    ```
 
 ---
