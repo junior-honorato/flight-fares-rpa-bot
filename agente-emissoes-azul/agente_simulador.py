@@ -32,9 +32,6 @@ cliente = genai.Client(api_key=CHAVE_API_GOOGLE)
 # ==========================================
 # 3. O CÉREBRO DA IA (PROMPT DE SIMULAÇÃO MATEMÁTICA)
 # ==========================================
-# ==========================================
-# 3. O CÉREBRO DA IA (PROMPT DE SIMULAÇÃO MATEMÁTICA)
-# ==========================================
 prompt_simulador = f"""
 Atue como um Planejador Financeiro especialista no programa TudoAzul e em emissão de passagens.
 
