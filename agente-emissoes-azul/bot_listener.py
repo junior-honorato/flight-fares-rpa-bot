@@ -1,5 +1,6 @@
 import telebot
 import subprocess
+import threading 
 import time
 import sys
 import os
@@ -75,8 +76,6 @@ def salvar_datas_arquivo(lista_datas):
 # ==========================================
 # COMANDOS DO TELEGRAM
 # ==========================================
-
-import threading # <-- ADICIONE NO TOPO JUNTO COM OS OUTROS IMPORTS
 
 # --- GATILHO: /buscar ---
 @bot.message_handler(commands=['buscar'])
