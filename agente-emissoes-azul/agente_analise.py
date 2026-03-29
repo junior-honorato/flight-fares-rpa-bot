@@ -16,6 +16,10 @@ TOKEN_TELEGRAM = segredos.get("TOKEN_TELEGRAM")
 CHAT_ID_ARLINDO = segredos.get("CHAT_ID_ARLINDO")
 CHAVE_API_GOOGLE = segredos.get("CHAVE_API_GOOGLE")
 
+# Extração dos Magic Numbers para análise
+SALDO_AZUL = os.getenv("SALDO_AZUL", "75000")
+QTD_PASSAGEIROS = os.getenv("QTD_PASSAGEIROS", "2")
+
 if not all([TOKEN_TELEGRAM, CHAT_ID_ARLINDO, CHAVE_API_GOOGLE]):
     raise ValueError("❌ Erro Crítico: Chaves ausentes no .env")
 
@@ -54,30 +58,28 @@ if not dados_rag.strip():
 # ==========================================
 # 4. O CÉREBRO DA IA (PROMPT DE ANALYTICS)
 # ==========================================
-prompt_analise = f"""
-Atue como um Cientista de Dados e Consultor Financeiro focado em emissão de passagens aéreas.
+prompt_agente = f"""
+Atue como um Analista de Dados de Viagens e Especialista em Milhas.
+Seu objetivo é analisar o histórico de preços e emitir um parecer técnico sobre a tendência de custo.
 
-CONTEXTO DA VIAGEM:
-- Destino: Portugal e Itália (setembro de 2026).
-- Passageiros: 2 (Titular e esposa).
-- Saldo Azul Atual: 75.000 pontos (Nível Safira).
-- Geração mensal: Clube Azul 10k.
-- Backup financeiro: Cartão C6 Carbon (pontos Átomos transferíveis para Azul).
+CONTEXTO DO USUÁRIO:
+- Objetivo: Viagem de 14 dias para a Europa (Portugal/Itália) em setembro de 2026.
+- Passageiros: {QTD_PASSAGEIROS}.
+- Saldo Azul Atual: {SALDO_AZUL} pontos.
+- Ativos extras: Cartão C6 Carbon e Clube Azul 10k.
 
-BASE DE DADOS HISTÓRICA (ÚLTIMAS BUSCAS DO ROBÔ):
-{dados_rag}
+DADOS HISTÓRICOS EXTRAÍDOS:
+{dados_para_ia}
 
-Sua missão é ler este histórico de preços e gerar um relatório analítico tático para o Telegram.
+SUA TAREFA:
+1. Identifique se o preço está em tendência de queda, alta ou estabilidade.
+2. Com base no saldo de {SALDO_AZUL} pontos, estime se a meta de emissão está próxima ou se o usuário deve aguardar uma promoção de transferência do C6 Carbon.
+3. Seja breve, use um tom profissional e direto.
 
-INSTRUÇÕES RIGOROSAS:
-1. Não use saudações ou despedidas. Vá direto ao ponto.
-2. Formate a resposta usando HTML básico (use <b>texto</b> para negrito). NUNCA use caracteres de Markdown como asteriscos (**) ou underlines (_).
-3. O relatório DEVE conter exatamente estas 3 seções:
-   - 📈 <b>Tendência do Mercado:</b> Os preços estão subindo, caindo ou estáveis nos últimos dias monitorados?
-   - 🔢 <b>Estatísticas Chave:</b> Qual foi o menor preço histórico registrado na base acima e qual a média de preço atual?
-   - 💡 <b>Recomendação Tática:</b> Cruzando o preço atual com os 75k de saldo e a geração do Clube 10k, compensa transferir pontos do C6 Carbon agora para garantir a emissão, ou o gráfico sugere que é melhor aguardar uma nova queda?
-
-Gere o relatório analítico:
+INSTRUÇÕES DE FORMATAÇÃO:
+- Use HTML (<b>negrito</b>).
+- NÃO use Markdown (asteriscos).
+- Retorne apenas a análise técnica em no máximo 3 parágrafos.
 """
 
 print("🧠 IA a processar tendências e a calcular estatísticas...\n")
