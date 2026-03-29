@@ -11,17 +11,19 @@ pasta_atual = os.path.dirname(os.path.abspath(__file__))
 pasta_raiz = os.path.dirname(pasta_atual)
 caminho_env = os.path.join(pasta_raiz, '.env')
 
+# Cria um dicionário com todos os segredos do .env
 segredos = dotenv_values(caminho_env)
 TOKEN_TELEGRAM = segredos.get("TOKEN_TELEGRAM")
 CHAT_ID_ARLINDO = segredos.get("CHAT_ID_ARLINDO")
 CHAVE_API_GOOGLE = segredos.get("CHAVE_API_GOOGLE")
+CAMINHO_PLANILHA = segredos.get("CAMINHO_PLANILHA")
 
-# Extração dos Magic Numbers para análise
-SALDO_AZUL = os.getenv("SALDO_AZUL", "75000")
-QTD_PASSAGEIROS = os.getenv("QTD_PASSAGEIROS", "2")
+# Extração dos Magic Numbers usando o mesmo dicionário de segredos
+SALDO_AZUL = segredos.get("SALDO_AZUL", "75000")
+QTD_PASSAGEIROS = segredos.get("QTD_PASSAGEIROS", "2")
 
-if not all([TOKEN_TELEGRAM, CHAT_ID_ARLINDO, CHAVE_API_GOOGLE]):
-    raise ValueError("❌ Erro Crítico: Chaves ausentes no .env")
+if not all([TOKEN_TELEGRAM, CHAT_ID_ARLINDO, CHAVE_API_GOOGLE, CAMINHO_PLANILHA]):
+    raise ValueError("❌ Erro Crítico: Chaves ou caminhos ausentes no .env")
 
 # ==========================================
 # 2. INICIALIZAÇÃO DA IA
@@ -31,11 +33,9 @@ cliente = genai.Client(api_key=CHAVE_API_GOOGLE)
 # ==========================================
 # 3. LEITURA DE DADOS (RAG - HISTÓRICO EXPANDIDO)
 # ==========================================
-caminho_excel = os.getenv("CAMINHO_PLANILHA")
-
 print("📊 Extraindo histórico completo do Excel para análise de tendências...")
 try:
-    df = pd.read_excel(caminho_excel, sheet_name="Historico_Precos")
+    df = pd.read_excel(CAMINHO_PLANILHA, sheet_name="Historico_Precos")
     df = df.dropna(subset=['Preço (Pontos)'])
     
     # Extrai as últimas 30 medições para ter amostragem suficiente
@@ -58,7 +58,7 @@ if not dados_rag.strip():
 # ==========================================
 # 4. O CÉREBRO DA IA (PROMPT DE ANALYTICS)
 # ==========================================
-prompt_agente = f"""
+prompt_analise = f"""
 Atue como um Analista de Dados de Viagens e Especialista em Milhas.
 Seu objetivo é analisar o histórico de preços e emitir um parecer técnico sobre a tendência de custo.
 
@@ -69,7 +69,7 @@ CONTEXTO DO USUÁRIO:
 - Ativos extras: Cartão C6 Carbon e Clube Azul 10k.
 
 DADOS HISTÓRICOS EXTRAÍDOS:
-{dados_para_ia}
+{dados_rag}
 
 SUA TAREFA:
 1. Identifique se o preço está em tendência de queda, alta ou estabilidade.
