@@ -70,6 +70,8 @@ flowchart LR
    TOKEN_TELEGRAM=seu_token_aqui
    CHAT_ID_ARLINDO=seu_chat_id_aqui_ou_id_do_grupo
    CHAVE_API_GOOGLE=sua_chave_gemini_aqui
+   CAMINHO_PLANILHA=sua_pasta_planilha
+   CAMINHO_PERFIL_CHROME=seu_perfil_Chrome
    ```
 
 ---
