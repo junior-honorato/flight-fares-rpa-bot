@@ -31,9 +31,9 @@ if not all([TOKEN_TELEGRAM, CHAT_ID_ARLINDO, CHAVE_API_GOOGLE]):
 cliente = genai.Client(api_key=CHAVE_API_GOOGLE)
 
 # ==========================================
-# LEITURA DOS DADOS (O RPA)
+# 3. LEITURA DE DADOS (RAG - ÚLTIMA BUSCA)
 # ==========================================
-caminho_excel = r"C:\Users\junio\Desktop\Automacao_Azul\historico_precos_azul.xlsx"
+caminho_excel = os.getenv("CAMINHO_PLANILHA")
 
 print("🔍 Lendo a aba 'Historico_Precos' do Excel...")
 try:
