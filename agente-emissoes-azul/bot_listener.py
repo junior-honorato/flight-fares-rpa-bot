@@ -1,6 +1,6 @@
 import telebot
 import subprocess
-import threading 
+import threading
 import time
 import sys
 import os
@@ -44,6 +44,7 @@ caminho_rpa = os.path.join(pasta_acima, "azul_bot.py")
 caminho_agente = os.path.join(pasta_atual, "agente_leitor_excel.py")
 caminho_analise = os.path.join(pasta_atual, "agente_analise.py") 
 caminho_datas = os.path.join(pasta_acima, "datas_viagem.txt")
+caminho_simulador = os.path.join(pasta_atual, "agente_simulador.py")
 
 # ==========================================
 # FUNÇÕES DE APOIO (LÊ E ESCREVE NO FORMATO CORRETO)
@@ -245,10 +246,25 @@ def menu_ajuda(mensagem):
         "🔍 **/buscar** - Aciona a esteira RPA. O robô varre o site da Azul buscando os preços das suas datas e a IA gera um Flash Report imediato com o menor valor.\n\n"
         "📅 **/datas** - Abre o painel interativo para você gerenciar, incluir, excluir ou alterar os dias que estou monitorando.\n\n"
         "📊 **/analise** - Ativa o modo Cientista de Dados (RAG). Eu leio todo o seu histórico no Excel, cruzo com o seu saldo (Azul + C6 Carbon) e te dou um parecer tático se é hora de emitir ou esperar.\n\n"
+        "🧮 **/simular** - Consulta o seu saldo e cria um plano tático de acúmulo de pontos.\n\n"
         "💡 *Dica de uso:* Verifique suas datas com `/datas` e depois rode uma `/analise` para ver a tendência do mercado hoje!"
     )
     
     bot.reply_to(mensagem, texto_ajuda, parse_mode="Markdown")
+
+# --- GATILHO: /simular ---
+@bot.message_handler(commands=['simular'])
+def comando_simular(mensagem):
+    bot.reply_to(mensagem, "🧮 **Modo Consultor Financeiro Ativado!**\n\nA calcular as projeções do seu Clube Azul 10k e a cruzar com a sua Meta de Pontos... O plano tático chega já a seguir! ⏳", parse_mode="Markdown")
+    
+    print("\n[🤖 COMANDO RECEBIDO] Iniciando Simulação Financeira...")
+    try:
+        subprocess.run([sys.executable, caminho_simulador], check=True)
+        print("✅ Simulação concluída.")
+    except Exception as e:
+        erro_msg = f"❌ Ocorreu um erro ao processar a simulação: {e}"
+        print(erro_msg)
+        bot.reply_to(mensagem, erro_msg)
 
 # ==========================================
 # LOOP INFINITO (BLINDADO CONTRA QUEDAS DE REDE)
