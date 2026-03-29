@@ -25,6 +25,9 @@ CHAT_ID_ARLINDO = os.getenv("CHAT_ID_ARLINDO")
 # Lê a meta de pontos
 META_PONTOS = 120000
 
+# Lê o caminho do perfil do Chrome
+CAMINHO_CHROME = os.getenv("CAMINHO_PERFIL_CHROME")
+
 # Validação de segurança
 if not TOKEN_TELEGRAM or not CHAT_ID_ARLINDO:
     logging.error(f"❌ Erro Crítico: O arquivo .env não foi lido corretamente no caminho: {caminho_env}")
@@ -53,8 +56,8 @@ def enviar_telegram(mensagem):
         logging.error(f"[TELEGRAM] Erro de conexão: {e}")
 
 def salvar_historico_excel(origem, destino, data_voo_formatada, menor_preco):
-    arquivo_excel = r"C:\Users\junio\Desktop\Automacao_Azul\historico_precos_azul.xlsx"
-    agora = datetime.now() 
+    arquivo_excel = os.getenv("CAMINHO_PLANILHA")
+    agora = datetime.now()
     
     try:
         if not os.path.exists(arquivo_excel):
@@ -265,13 +268,14 @@ if __name__ == "__main__":
     # ==========================================
     with sync_playwright() as p:
         browser = p.chromium.launch_persistent_context(
-            user_data_dir=r"C:\Chrome_Azul", 
-            channel="chrome",                
-            headless=False, 
-            no_viewport=True, 
-            args=["--disable-blink-features=AutomationControlled", "--start-maximized"]
+            user_data_dir=CAMINHO_CHROME, # <-- A variável entra aqui sem aspas
+            channel="chrome",
+            headless=False,
+            args=["--start-maximized"]
         )
-        page = browser.new_page()
+        
+        # A primeira aba que o navegador abre
+        page = browser.pages[0]
 
         for data in DATAS_VIAGEM:
             logging.info(f"\n==========================================")
