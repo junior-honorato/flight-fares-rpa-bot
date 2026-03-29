@@ -72,8 +72,9 @@ flowchart LR
    CHAVE_API_GOOGLE=sua_chave_gemini_aqui
    CAMINHO_PLANILHA=sua_pasta_planilha
    CAMINHO_PERFIL_CHROME=seu_perfil_Chrome
-   SALDO_AZUL=75000
-   QTD_PASSAGEIROS=2
+   SALDO_AZUL=seu_saldo_azul_atual
+   QTD_PASSAGEIROS=quantidade_passageiros
+   META_PONTOS=meta_pontos_passagem
    ```
 
 ---
