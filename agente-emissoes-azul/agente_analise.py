@@ -1,8 +1,11 @@
 import os
+import sys
 import requests
 import pandas as pd
 from dotenv import dotenv_values
 from google import genai
+
+sys.stdout.reconfigure(encoding='utf-8')
 
 # ==========================================
 # 1. CONFIGURAÇÃO DE AMBIENTE

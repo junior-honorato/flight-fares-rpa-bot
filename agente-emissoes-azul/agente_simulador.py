@@ -4,6 +4,9 @@ import requests
 from dotenv import dotenv_values
 from google import genai
 
+# Força codificação UTF-8 no terminal
+sys.stdout.reconfigure(encoding='utf-8')
+
 # ==========================================
 # 1. CONFIGURAÇÃO DE AMBIENTE
 # ==========================================

@@ -1,9 +1,12 @@
 import os
+import sys
 import time
 import logging
 import requests
 from dotenv import load_dotenv
 from datetime import datetime
+
+sys.stdout.reconfigure(encoding='utf-8')
 from playwright.sync_api import sync_playwright
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Alignment
