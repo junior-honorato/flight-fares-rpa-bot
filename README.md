@@ -68,7 +68,7 @@ flowchart LR
 
 ## 🚀 Como Executar Localmente
 1. Clone o repositório.
-2. Instale as dependências: `pip install playwright pandas openpyxl google-genai pyTelegramBotAPI python-dotenv requests`
+2. Instale as dependências: `pip install playwright playwright-stealth pandas openpyxl google-genai pyTelegramBotAPI python-dotenv requests`
 3. Instale os navegadores do Playwright: `playwright install chromium`
 4. Crie um arquivo chamado `.env` na raiz do projeto e preencha suas chaves e métricas:
    ```env

@@ -8,8 +8,10 @@ from datetime import datetime
 
 sys.stdout.reconfigure(encoding='utf-8')
 from playwright.sync_api import sync_playwright
+from playwright_stealth import Stealth
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font, Alignment
+import random
 
 # ==========================================
 # CONFIGURAÇÃO DE SEGURANÇA E AMBIENTE
@@ -126,23 +128,25 @@ def buscar_passagem_azul(page, origem, destino, data_ida):
         campo_origem = page.locator("input[aria-label='Origem'][role='combobox']").first
         campo_origem.evaluate("node => node.focus()")
         campo_origem.evaluate("node => node.click()")
-        time.sleep(0.5)
+        time.sleep(random.uniform(0.5, 1.5))
         page.keyboard.press("Control+A")
         page.keyboard.press("Backspace")
-        campo_origem.press_sequentially(origem, delay=200) 
-        time.sleep(2) 
+        time.sleep(random.uniform(0.3, 0.8))
+        campo_origem.press_sequentially(origem, delay=random.randint(150, 450)) 
+        time.sleep(random.uniform(2, 4)) 
         page.keyboard.press("ArrowDown")
-        time.sleep(0.5)
+        time.sleep(random.uniform(0.5, 1.2))
         page.keyboard.press("Enter")
 
         campo_destino = page.locator("input[aria-label='Destino'][role='combobox']").first
         campo_destino.evaluate("node => node.focus()")
         campo_destino.evaluate("node => node.click()")
-        time.sleep(0.5)
+        time.sleep(random.uniform(0.5, 1.5))
         page.keyboard.press("Control+A")
         page.keyboard.press("Backspace")
-        campo_destino.press_sequentially(destino, delay=200)
-        time.sleep(2)
+        time.sleep(random.uniform(0.3, 0.8))
+        campo_destino.press_sequentially(destino, delay=random.randint(150, 450))
+        time.sleep(random.uniform(2, 4))
         for _ in range(3):
             page.keyboard.press("ArrowDown")
             time.sleep(0.3) 
@@ -152,14 +156,15 @@ def buscar_passagem_azul(page, origem, destino, data_ida):
         campo_data = page.locator("input[aria-label='Data de ida']").first
         campo_data.evaluate("node => node.focus()")
         campo_data.evaluate("node => node.click()")
-        time.sleep(0.5)
+        time.sleep(random.uniform(0.5, 1.5))
         page.keyboard.press("Control+A")
         page.keyboard.press("Backspace")
-        campo_data.press_sequentially(data_ida, delay=150)
-        time.sleep(1)
+        time.sleep(random.uniform(0.3, 0.8))
+        campo_data.press_sequentially(data_ida, delay=random.randint(150, 450))
+        time.sleep(random.uniform(1.5, 3))
         page.keyboard.press("Enter")
         page.keyboard.press("Escape")
-        time.sleep(1)
+        time.sleep(random.uniform(1, 2))
 
         try:
             page.locator("input[data-cy='checkbox-points']").evaluate("node => node.click()")
@@ -279,6 +284,7 @@ if __name__ == "__main__":
         
         # A primeira aba que o navegador abre
         page = browser.pages[0]
+        Stealth().apply_stealth_sync(page)
 
         for data in DATAS_VIAGEM:
             logging.info(f"\n==========================================")
@@ -303,6 +309,11 @@ if __name__ == "__main__":
                 msg_erro = f"⚠️ *Alerta do Robô*\nNão consegui extrair os preços para o dia {data[:2]}/{data[2:4]} após {MAX_TENTATIVAS} tentativas."
                 enviar_telegram(msg_erro)
                 logging.error(f"Desistindo da data {data} após {MAX_TENTATIVAS} tentativas.")
+            else:
+                # Espera aleatória longa entre datas para enganar o antibot
+                pausa_antibot = random.uniform(8.0, 16.0)
+                logging.info(f"Pausa anti-bot de {pausa_antibot:.1f} segundos antes de buscar a próxima data...")
+                time.sleep(pausa_antibot)
 
         logging.info("\n==========================================")
         logging.info("Fechando o navegador...")

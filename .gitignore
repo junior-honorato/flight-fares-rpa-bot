@@ -1,0 +1,4 @@
+.env
+log_azul_bot.txt
+__pycache__/
+*.pyc
